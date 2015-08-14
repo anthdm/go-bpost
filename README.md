@@ -1,2 +1,2 @@
 # go-bpost
-Package to communicate with BPOST web services
+Go client to communicate with BPOST web services
