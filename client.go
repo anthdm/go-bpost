@@ -52,7 +52,7 @@ func (c *Client) NewRequest(method, url string, body interface{}) (*http.Request
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Accept", "application/vnd.bpost.shm-order-v3+XML")
+	req.Header.Add("Accept", "application/vnd.bpost.shm-order-v3.3+XML")
 
 	token := fmt.Sprintf("%s:%s", c.accountID, c.passPhrase)
 	base64Str := encodeBase64([]byte(token))
