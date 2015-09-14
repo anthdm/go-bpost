@@ -40,7 +40,7 @@ type OrderLine struct {
 
 // FetchOrder retrieves a single order by BPOST reference.
 func (c *Client) FetchOrder(ref string) (*OrderInfo, error) {
-	req, err := c.NewRequest("GET", "orders/"+ref, nil)
+	req, err := c.NewRequest("GET", "orders/"+ref, false, nil)
 	if err != nil {
 		return nil, err
 	}
