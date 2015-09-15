@@ -9,8 +9,6 @@ import (
 	"path"
 )
 
-const defaultBaseURL = "https://api.bpost.be/services/shm/"
-
 // Client manages communication with the BPOST API.
 type Client struct {
 	// HTTP client to communicate with the request API.
@@ -27,21 +25,25 @@ type Client struct {
 }
 
 // NewClient returns a new BPOST API client.
-func NewClient(httpClient *http.Client, id, passPhrase string) *Client {
+func NewClient(httpClient *http.Client, url string, id, passPhrase string) *Client {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
 	c := &Client{
 		Client:     httpClient,
-		baseURL:    defaultBaseURL,
+		baseURL:    url,
 		accountID:  id,
 		passPhrase: passPhrase,
 	}
 	return c
 }
 
-func (c *Client) NewRequest(method, url string, body interface{}) (*http.Request, error) {
-	reqURL := path.Join(c.accountID, url)
+func (c *Client) NewRequest(method, url string, tracking bool, body interface{}) (*http.Request, error) {
+	reqURL := url
+	if !tracking {
+		reqURL = path.Join(c.accountID, url)
+	}
+
 	reqURL = c.baseURL + reqURL
 
 	buf := &bytes.Buffer{}
@@ -52,7 +54,10 @@ func (c *Client) NewRequest(method, url string, body interface{}) (*http.Request
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Accept", "application/vnd.bpost.shm-order-v3.3+XML")
+
+	if !tracking {
+		req.Header.Add("Accept", "application/vnd.bpost.shm-order-v3.3+XML")
+	}
 
 	token := fmt.Sprintf("%s:%s", c.accountID, c.passPhrase)
 	base64Str := encodeBase64([]byte(token))
