@@ -26,8 +26,11 @@ func (c *Client) FetchTracking(ref string) (*TrackingInfo, error) {
 	}
 
 	response := TrackingInfo{}
-	if err := xml.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, err
+	if resp.StatusCode == 200 {
+		if err := xml.NewDecoder(resp.Body).Decode(&response); err != nil {
+			return nil, err
+		}
 	}
+
 	return &response, nil
 }
